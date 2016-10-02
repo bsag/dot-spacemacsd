@@ -1,0 +1,36 @@
+#+TITLE: bsag-hugo layer
+
+# TOC links should be GitHub style anchors.
+* Table of Contents                                        :TOC_4_gh:noexport:
+ - [[#description][Description]]
+ - [[#install][Install]]
+ - [[#key-bindings][Key bindings]]
+
+* Description
+This little layer provides a function for starting a new Hugo blog entry. It is
+modified from a very similar snippet by [[http://robotfantastic.org/elisp-to-create-a-pelican-blog-entry.html][Christopher R. Wagner]] for starting a
+Pelican blog entry.
+
+It requests a title for the post, then creates a new file in the
+=content/archives= directory (you might want to change this if you keep your
+posts in another directory), filling in the relevant meta-data, with the title
+'slugified' and added to the =slug= metadata line.
+
+Note that it uses =YAML= format meta-data, so you may need to alter the format
+if you use =TOML= metadata.
+
+* Install
+To use this configuration layer, add it to your =~/.spacemacs=. You will need to
+add =bsag-hugo= to the existing =dotspacemacs-configuration-layers= list in this
+file.
+
+You'll need to edit the path for =blog-root= for your Hugo installation.
+
+The function is =start-blog-entry=, so in Spacemacs run the function with:
+
+~SPC : start-blog-entry~
+
+* Key bindings
+
+There are no keybindings yet, but you could add a keybinding to the function to
+start it.

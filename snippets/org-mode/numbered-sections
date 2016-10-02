@@ -1,0 +1,7 @@
+# -*- mode: snippet; require-final-newline: nil -*-
+# name: Numbered sections
+# key: num
+# binding: direct-keybinding
+# --
+#+PANDOC_OPTIONS: number-sections:t
+$0

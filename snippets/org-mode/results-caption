@@ -1,0 +1,8 @@
+# -*- mode: snippet; require-final-newline: nil -*-
+# name: Results caption
+# key: rcap
+# binding: direct-keybinding
+# --
+#+name: ${1:name} 
+#+caption: ${2:caption}
+$0

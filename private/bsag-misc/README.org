@@ -1,0 +1,33 @@
+#+TITLE: bsag-misc layer
+
+# TOC links should be GitHub style anchors.
+* Table of Contents                                        :TOC_4_gh:noexport:
+ - [[#description][Description]]
+ - [[#install][Install]]
+ - [[#key-bindings][Key bindings]]
+
+* Description
+This layer brings together various small functions or customizations that I find
+useful. I'll probably add random functions to this over time, rather than
+cluttering up my =init.el= file.
+
+I doubt it will be of use to anyone else!
+
+* Install
+To use this configuration layer, add it to your =~/.spacemacs=. You will need to
+add =bsag-misc= to the existing =dotspacemacs-configuration-layers= list in this
+file.
+
+* Key bindings
+
+| Key Binding | Description                                      |
+|-------------+--------------------------------------------------|
+| ~M [~       | Scroll doc-view in other window to previous page |
+| ~M ]~       | Scroll doc-view in other window to next page     |
+| ~<SPC> o m~ | Opens Marked.app to preview the current buffer   |
+
+# Use GitHub URLs if you wish to link a Spacemacs documentation file or its heading.
+# Examples:
+# [[https://github.com/syl20bnr/spacemacs/blob/master/doc/VIMUSERS.org#sessions]]
+# [[https://github.com/syl20bnr/spacemacs/blob/master/layers/%2Bfun/emoji/README.org][Link to Emoji layer README.org]]
+# If space-doc-mode is enabled, Spacemacs will open a local copy of the linked file.

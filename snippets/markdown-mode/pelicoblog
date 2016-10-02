@@ -1,0 +1,11 @@
+# -*- mode: snippet; require-final-newline: nil -*-
+# name: Pelicoblog YAML meta-data 
+# key: yml
+# binding: direct-keybinding
+# --
+Title: ${1:title}
+Slug: ${1:$(downcase (replace-regexp-in-string "\s" "-" yas-text))}
+Date: `(insert (format-time-string "%Y-%m-%d %H:%M:%S"))`
+Tags: $2
+
+$0

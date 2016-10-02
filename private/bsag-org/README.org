@@ -1,0 +1,45 @@
+#+TITLE: bsag-org layer
+#+HTML_HEAD_EXTRA: <link rel="stylesheet" type="text/css" href="../css/readtheorg.css" />
+
+
+* Table of Contents                                        :TOC_4_org:noexport:
+ - [[Description][Description]]
+ - [[Install][Install]]
+ - [[Key bindings][Key bindings]]
+
+* Description
+This layer brings together some =org-mode= related customizations that I find
+useful. It is heavily based on
+[[https://github.com/CestDiego/spacemacs_conf/blob/master/org-cestdiego/packages.el][Cestdiego's org layer]].
+
+It sets up a =lab-notebook-mode=, which can be set up to automatically check in
+to version control on each change (I don't currently use that), and is the
+target for many of my =org-capture= templates. Essentially, the lab notebook
+acts as my journal and place to capture random notes. I have other org files for
+more substantial projects, and link them back to the lab notebook so that I can
+find them easily (assisted by the org-capture 'context' template). I also set up
+a key binding to open my lab notebook quickly from anywhere.
+
+There's a key binding to run an Applescript to export all the Papers.app
+references into a BibTeX file.
+
+I st up my =org-pandoc= config here, as well as basic =org-mode= tweaks.
+
+Finally, a function adds a new link function to open any links (including
+url-handlers provided by third-party macOS software) using the =open= command.
+This allows you to store (for example) DevonThink and Papers links as org format
+links, which is very handy.
+
+* Install
+To use this contribution add it to your =~/.spacemacs=
+
+#+begin_src emacs-lisp
+  (setq-default dotspacemacs-configuration-layers '(bsag-org))
+#+end_src
+
+* Key bindings
+
+| Key Binding | Description                               |
+|-------------+-------------------------------------------|
+| ~<f5>~      | Export BibTeX file from Papers references |
+| ~<SPC> o l~ | Open lab notebook                         |

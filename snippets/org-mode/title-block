@@ -1,0 +1,13 @@
+# -*- mode: snippet; require-final-newline: nil -*-
+# name: Title block
+# key: title
+# binding: direct-keybinding
+# --
+#+TITLE: ${1:The title}
+#+DATE: `(insert (format-time-string "%d %B, %Y"))`
+#+SETUPFILE: ~/Dropbox/org/org-setup.org
+#+OPTIONS: num:nil H:2 ^:t |:t
+#+PANDOC_OPTIONS: number-sections:t
+#+PANDOC_OPTIONS: csl:~/.pandoc/csl/proc-r-soc-b.csl
+#+ABSTRACT: $2
+$0
