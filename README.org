@@ -1,0 +1,11 @@
+#+TITLE: My .spacemacs.d/ setup
+
+This is my =~/.spacemacs.d/= configuration: note that I am using the develop
+branch of Spacemacs, so some things may not work as expected on the release
+branch. I'm still getting to grips with Emacs and Spacemacs, so there are
+probably many aspects that could be coded in a much more elegant way, or are
+useful only to me!
+
+However, I'm putting this in a public repo because a few people have expressed
+an interest in seeing my config. It's probably more useful to view as an example
+than to fork and use yourself as it is.
