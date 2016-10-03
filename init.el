@@ -334,10 +334,6 @@ This is the place where most of your configurations should be done. Unless it is
 explicitly specified that a variable should be set before a package is loaded,
 you should place your code here."
 
-  ;; (with-eval-after-load 'org-agenda
-  ;;   (require 'org-projectile)
-  ;;   (push (org-projectile:todo-files) org-agenda-files))
-
   ;; Powerline settings and fixes
   (setq ns-use-srgb-colorspace nil) ; Fixes powerline colours on macOS
   (setq powerline-default-separator 'arrow)
@@ -347,7 +343,6 @@ you should place your code here."
   (add-hook 'ess-mode-hook
             (lambda ()
               (ess-toggle-underscore nil)))
-
 
   ;; Dired customisation
   (setq projectile-switch-project-action 'projectile-dired) ; dired loads on project switch

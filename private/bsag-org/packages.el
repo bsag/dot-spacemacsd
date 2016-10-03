@@ -30,14 +30,7 @@
 ;;; Code: modelled on https://github.com/CestDiego/spacemacs_conf/blob/master/org-cestdiego/packages.el
 
 (defconst bsag-org-packages
-  '(org
-    ox-ioslide
-    ox-cv
-    ;; (ob                        :location built-in)
-    (org-protocol              :location built-in)
-    (org-capture               :location built-in)
-    (org-agenda                :location built-in)
-    )
+  '()
   "The list of Lisp packages required by the bsag-org layer.
 
 Each entry is either:
@@ -65,80 +58,68 @@ Each entry is either:
       - A list beginning with the symbol `recipe' is a melpa
         recipe.  See: https://github.com/milkypostman/melpa#recipe-format")
 
-(defun ensure-in-vc-or-checkin ()
-  (interactive)
-  (if (file-exists-p (format "%s" (buffer-file-name)))
-      (progn (vc-next-action nil) (message "Committed"))
-    (ding) (message "File not checked in.")))
+;;
+;; General org-mode configuration
+;;
+(with-eval-after-load 'org
+  (setq org-directory "~/Dropbox/org/")
+  (setq org-agenda-files (quote ("~/Dropbox/org")))
+  (setq org-default-notes-file (quote (concat org-directory "inbox.org")))
+  (setq org-refile-targets (quote ((nil :maxlevel . 10)
+                                  (org-agenda-files :maxlevel . 10))))
 
-(defun export-bibtex ()
-  "Exports Papers library using a custom applescript."
-  (interactive)
-  (message "Exporting papers library...")
-  (shell-command "osascript ~/Dropbox/bin/export-papers-as-bibtex.scpt"))
+  (setq org-refile-use-outline-path t)
+  (setq org-outline-path-complete-in-steps nil)
+  (setq org-refile-allow-creating-parent-nodes (quote confirm))
+  (setq org-todo-keywords
+        '((sequence "TODO" "STARTED" "|" "DONE")))
+  (setq org-agenda-include-diary nil)
+  (setq org-icalendar-timezone "Europe/London")
+  (setq org-cycle-separator-lines 0)
+  ;; Throw error if you try to delete hidden/folded text
+  (setq org-catch-invisible-edits 'error)
+  ;; export settings
+  (setq org-html-head-include-default-scripts nil)
+  (setq org-html-head-include-default-style nil)
 
-(define-minor-mode lab-notebook-mode
-  "Toggle lab notebook mode"
-  ;; initial value
-  nil
-  ;; indicator
-  :lighter " LN"
-  ;; keybindings
-  :keymap (let ((map (make-sparse-keymap)))
-            (define-key map (kbd "<f5>") 'export-bibtex)
-            map)
-  ;; body
-  ;; (add-hook 'buffer-list-update-hook 'ensure-in-vc-or-checkin nil 'make-it-local)
-)
+  ;; ox-pandoc options
+  (setq org-pandoc-options '((standalone . t)
+                            (smart . t)
+                            (parse-raw . t)
+                            (bibliography . "~/Dropbox/Documents/bibtex/all-refs.bib")
+                            ))
+  (setq org-pandoc-options-for-beamer-pdf '((latex-engine . "xelatex")))
+  (setq org-pandoc-options-for-latex-pdf '((latex-engine . "xelatex")
+                                          (template . "~/.pandoc/templates/memoir2.latex" )))
+  (setq org-pandoc-options-for-latex '((latex-engine . "xelatex")
+                                      (template . "~/.pandoc/templates/memoir2.latex" )))
+  (setq org-pandoc-options-for-html5 '((section-divs . t)))
 
-(defun bsag-org/init-ox-ioslide ()
-  (use-package ox-ioslide
-    :config
-    (require 'ox-ioslide-helper)))
+  ;; org-babel config
+  (setq org-startup-folded nil)
+  (setq org-src-tab-acts-natively t)
+  (setq org-confirm-babel-evaluate nil)
+  (setq org-ditaa-jar-path "/usr/local/bin/ditaa")
 
-(defun bsag-org/init-org-protocol ()
-  (use-package org-protocol))
+  ;; Org clock config
+  ;; Resume clocking task when emacs is restarted
+  (org-clock-persistence-insinuate)
+  ;; Resume clocking task on clock-in if the clock is open
+  (setq org-clock-in-resume t)
+  ;; Separate drawers for clocking and logs
+  (setq org-drawers (quote ("PROPERTIES" "LOGBOOK")))
+  (setq org-clock-into-drawer t)
+  (setq org-clock-out-remove-zero-time-clocks t)
+  (setq org-clock-out-when-done t)
+  ;; Save the running clock and all clock history when exiting Emacs, load it on startup
+  (setq org-clock-persist t)
+  (setq org-clock-report-include-clocking-task t)
+  )
 
-(defun bsag-org/init-org-capture ()
-  (use-package org-capture
-    :commands org-capture
-    :defer t
-    :init
-    (add-hook 'org-capture-mode-hook 'evil-insert-state)
-    :config
-    (defadvice org-switch-to-buffer-other-window
-        (after make-full-capture-window-frame activate)
-      "Agenda to be the sole window when it is in a popup frame"
-      (when (equal "emacs-capture" (frame-parameter nil 'name))
-        (delete-other-windows)
-        (hidden-mode-line-mode)))
-
-    ;;;; Thank you random guy from StackOverflow
-    ;;;; http://goo.gl/OOWIVp
-    (defadvice org-capture
-        (after make-full-window-frame activate)
-      "Advise capture to be the sole window when in a popup frame"
-      (when (equal "emacs-capture" (frame-parameter nil 'name))
-        (delete-other-windows)))
-
-    ;; alfred-org-capture
-    (defun make-orgcapture-frame ()
-      "Create a new frame and run org-capture."
-      (interactive)
-      (make-frame '((name . "emacs-capture") (width . 80) (height . 16)
-                    (top . 400) (left . 300)
-                    ))
-      (select-frame-by-name "emacs-capture")
-      (org-capture))
-
-    (defadvice org-capture-finalize
-        (after delete-capture-frame activate)
-      "Advise capture-finalize to close the frame"
-      (if (equal "emacs-capture" (frame-parameter nil 'name))
-          (delete-frame)))
-
-    ;;; Capture Templates
-    (setq org-capture-templates
+;;
+;; Capture
+;;
+(setq org-capture-templates
           '(("a" "Todo" entry
              (file+headline "inbox.org" "Tasks")
              "* TODO %? %^g \n %i\n")
@@ -168,88 +149,71 @@ Each entry is either:
              entry (file+datetree (concat org-directory "lab-notebook.org"))
              "**** %T DONE %c %?"
              :empty-lines 1)
-            ))))
+              ))
 
-(defun bsag-org/pre-init-org-agenda ()
-  (spacemacs|use-package-add-hook org-agenda
-    :post-config
-    (progn
+(with-eval-after-load 'org-capture
+    (add-hook 'org-capture-mode-hook 'evil-insert-state)
 
-      (defadvice org-switch-to-buffer-other-window (after make-full-agenda-window-frame activate)
-        "Advice this function inside the agenda to be the sole window when in a popup frame"
-        (when (equal "emacs-agenda" (frame-parameter nil 'name))
-          (delete-other-windows)
-          (hidden-mode-line-mode)))
+    (defadvice org-switch-to-buffer-other-window
+        (after make-full-capture-window-frame activate)
+      "Agenda to be the sole window when it is in a popup frame"
+      (when (equal "emacs-capture" (frame-parameter nil 'name))
+        (delete-other-windows)
+        (hidden-mode-line-mode)))
 
-      (defadvice org-agenda-quit (after make-full-window-frame activate)
-        "Advise org-agenda to be the sole window when in a popup frame"
-        (if (equal "emacs-agenda" (frame-parameter nil 'name))
-            (delete-frame)))
+    ;; ;;;; Thank you random guy from StackOverflow
+    ;; ;;;; http://goo.gl/OOWIVp
+    (defadvice org-capture
+        (after make-full-window-frame activate)
+      "Advise capture to be the sole window when in a popup frame"
+      (when (equal "emacs-capture" (frame-parameter nil 'name))
+        (delete-other-windows)))
 
-      (setq org-agenda-custom-commands
-            (append '(("l" tags "links"
-                       ((org-agenda-overriding-header "Links that I have to read: ")
-                        (org-agenda-skip-function
-                         '(org-agenda-skip-entry-if 'todo '("reading" "read")))))
-                      ("e" tags-todo "Events"))
-                    org-agenda-custom-commands)))))
+    ;; ;; alfred-org-capture
+    (defun make-orgcapture-frame ()
+      "Create a new frame and run org-capture."
+      (interactive)
+      (make-frame '((name . "emacs-capture") (width . 80) (height . 16)
+                    (top . 400) (left . 300)
+                    ))
+      (select-frame-by-name "emacs-capture")
+      (org-capture))
 
+    (defadvice org-capture-finalize
+        (after delete-capture-frame activate)
+      "Advise capture-finalize to close the frame"
+      (if (equal "emacs-capture" (frame-parameter nil 'name))
+          (delete-frame)))
+  )
 
-(defun bsag-org/post-init-org()
-  "Initialize my package"
-  (setq org-directory "~/Dropbox/org/")
-  (setq org-agenda-files (quote ("~/Dropbox/org")))
-  (setq org-default-notes-file (quote (concat org-directory "inbox.org")))
-  (setq org-refile-targets (quote ((nil :maxlevel . 10)
-                                   (org-agenda-files :maxlevel . 10))))
+;;
+;; Other org-related functions and configs
+;;
+(defun bsag-org/ensure-in-vc-or-checkin ()
+  (interactive)
+  (if (file-exists-p (format "%s" (buffer-file-name)))
+      (progn (vc-next-action nil) (message "Committed"))
+    (ding) (message "File not checked in.")))
 
-  (setq org-refile-use-outline-path t)
-  (setq org-outline-path-complete-in-steps nil)
-  (setq org-refile-allow-creating-parent-nodes (quote confirm))
-  (setq org-todo-keywords
-        '((sequence "TODO" "STARTED" "|" "DONE")))
-  (setq org-agenda-include-diary nil)
-  (setq org-icalendar-timezone "Europe/London")
-  (setq org-cycle-separator-lines 0)
-  ;; Throw error if you try to delete hidden/folded text
-  (setq org-catch-invisible-edits 'error)
-  ;; export settings
-  (setq org-html-head-include-default-scripts nil)
-  (setq org-html-head-include-default-style nil)
+(defun bsag-org/export-bibtex ()
+  "Exports Papers library using a custom applescript."
+  (interactive)
+  (message "Exporting papers library...")
+  (shell-command "osascript ~/Dropbox/bin/export-papers-as-bibtex.scpt"))
 
-  ;; ox-pandoc options
-  (setq org-pandoc-options '((standalone . t)
-                             (smart . t)
-                             (parse-raw . t)
-                             (bibliography . "~/Dropbox/Documents/bibtex/all-refs.bib")
-                             ))
-  (setq org-pandoc-options-for-beamer-pdf '((latex-engine . "xelatex")))
-  (setq org-pandoc-options-for-latex-pdf '((latex-engine . "xelatex")
-                                           (template . "~/.pandoc/templates/memoir2.latex" )))
-  (setq org-pandoc-options-for-latex '((latex-engine . "xelatex")
-                                       (template . "~/.pandoc/templates/memoir2.latex" )))
-  (setq org-pandoc-options-for-html5 '((section-divs . t)))
-  ;; org-babel stuff
-  (setq org-startup-folded nil)
-  (setq org-src-fontify-natively t)
-  (setq org-src-tab-acts-natively t)
-  (setq org-confirm-babel-evaluate nil)
-  (setq org-ditaa-jar-path "/usr/local/bin/ditaa")
-
- ;; Org clock config
- ;; Resume clocking task when emacs is restarted
-(org-clock-persistence-insinuate)
-;; Resume clocking task on clock-in if the clock is open
-(setq org-clock-in-resume t)
-;; Separate drawers for clocking and logs
-(setq org-drawers (quote ("PROPERTIES" "LOGBOOK")))
-(setq org-clock-into-drawer t)
-(setq org-clock-out-remove-zero-time-clocks t)
-(setq org-clock-out-when-done t)
-;; Save the running clock and all clock history when exiting Emacs, load it on startup
-(setq org-clock-persist t)
-(setq org-clock-report-include-clocking-task t)
- )
+(define-minor-mode lab-notebook-mode
+  "Toggle lab notebook mode"
+  ;; initial value
+  nil
+  ;; indicator
+  :lighter " LN"
+  ;; keybindings
+  :keymap (let ((map (make-sparse-keymap)))
+            (define-key map (kbd "<f5>") 'bsag-org/export-bibtex)
+            map)
+  ;; body
+  ;; (add-hook 'buffer-list-update-hook 'ensure-in-vc-or-checkin nil 'make-it-local)
+)
 
 ;; Other random config: open lab-notebook with Spc ol
 (defun bsag-org/open-lab-notebook ()
@@ -261,12 +225,12 @@ Each entry is either:
 
 ;; Open special url-handler links with macOS `open' command
 ;; This means you can open DevonThink and Papers links in org files
-(defun org-pass-link-to-system (link)
+(defun bsag-org/org-pass-link-to-system (link)
   (if (string-match "^[a-zA-Z0-9\-]+:" link)
       (shell-command (concat "open " (shell-quote-argument link)))
     nil)
   )
 
-(add-hook 'org-open-link-functions 'org-pass-link-to-system)
+(add-hook 'org-open-link-functions 'bsag-org/org-pass-link-to-system)
 
 ;;; packages.el ends here
