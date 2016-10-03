@@ -235,6 +235,20 @@ Each entry is either:
   (setq org-src-tab-acts-natively t)
   (setq org-confirm-babel-evaluate nil)
   (setq org-ditaa-jar-path "/usr/local/bin/ditaa")
+
+ ;; Org clock config
+ ;; Resume clocking task when emacs is restarted
+(org-clock-persistence-insinuate)
+;; Resume clocking task on clock-in if the clock is open
+(setq org-clock-in-resume t)
+;; Separate drawers for clocking and logs
+(setq org-drawers (quote ("PROPERTIES" "LOGBOOK")))
+(setq org-clock-into-drawer t)
+(setq org-clock-out-remove-zero-time-clocks t)
+(setq org-clock-out-when-done t)
+;; Save the running clock and all clock history when exiting Emacs, load it on startup
+(setq org-clock-persist t)
+(setq org-clock-report-include-clocking-task t)
  )
 
 ;; Other random config: open lab-notebook with Spc ol
