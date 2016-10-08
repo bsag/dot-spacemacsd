@@ -30,7 +30,7 @@
 ;;; Code: modelled on https://github.com/CestDiego/spacemacs_conf/blob/master/org-cestdiego/packages.el
 
 (defconst bsag-org-packages
-  '()
+  '(org-clock-csv)
   "The list of Lisp packages required by the bsag-org layer.
 
 Each entry is either:
@@ -57,6 +57,12 @@ Each entry is either:
 
       - A list beginning with the symbol `recipe' is a melpa
         recipe.  See: https://github.com/milkypostman/melpa#recipe-format")
+
+(defun bsag-org/init-org-clock-csv ()
+  (use-package org-clock-csv
+    :defer t
+    :init (spacemacs/set-leader-keys-for-major-mode 'org-mode
+            "oe" 'org-clock-csv ())))
 
 ;;
 ;; General org-mode configuration
