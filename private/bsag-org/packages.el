@@ -141,7 +141,7 @@ Each entry is either:
              :empy-lines 1)
             ("e" "Lab Notebook entry"
              entry (file+datetree (concat org-directory "lab-notebook.org"))
-             "**** %T %?"
+             "**** %? \n%T"
              :empty-lines 1)
             ("c" "Lab Notebook with context"
              entry (file+datetree (concat org-directory "lab-notebook.org"))
