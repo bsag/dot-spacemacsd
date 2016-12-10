@@ -75,8 +75,6 @@ values."
      python
      ruby
      yaml
-     (ess :variables
-          ess-enable-smart-equals nil)
      evil-commentary
      ranger
      finance

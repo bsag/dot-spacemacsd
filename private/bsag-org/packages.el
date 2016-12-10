@@ -157,41 +157,6 @@ Each entry is either:
              :empty-lines 1)
               ))
 
-(with-eval-after-load 'org-capture
-    (add-hook 'org-capture-mode-hook 'evil-insert-state)
-
-    (defadvice org-switch-to-buffer-other-window
-        (after make-full-capture-window-frame activate)
-      "Agenda to be the sole window when it is in a popup frame"
-      (when (equal "emacs-capture" (frame-parameter nil 'name))
-        (delete-other-windows)
-        (hidden-mode-line-mode)))
-
-    ;; ;;;; Thank you random guy from StackOverflow
-    ;; ;;;; http://goo.gl/OOWIVp
-    (defadvice org-capture
-        (after make-full-window-frame activate)
-      "Advise capture to be the sole window when in a popup frame"
-      (when (equal "emacs-capture" (frame-parameter nil 'name))
-        (delete-other-windows)))
-
-    ;; ;; alfred-org-capture
-    (defun make-orgcapture-frame ()
-      "Create a new frame and run org-capture."
-      (interactive)
-      (make-frame '((name . "emacs-capture") (width . 80) (height . 16)
-                    (top . 400) (left . 300)
-                    ))
-      (select-frame-by-name "emacs-capture")
-      (org-capture))
-
-    (defadvice org-capture-finalize
-        (after delete-capture-frame activate)
-      "Advise capture-finalize to close the frame"
-      (if (equal "emacs-capture" (frame-parameter nil 'name))
-          (delete-frame)))
-  )
-
 ;;
 ;; Other org-related functions and configs
 ;;
